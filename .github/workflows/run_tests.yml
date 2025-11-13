@@ -1,18 +1,33 @@
 name: Test Orchestrator
 
-# Allows a “Run workflow” button in the Actions tab
 on:
   workflow_dispatch: {}
 
 jobs:
-  run-tests:
+  RunUnitTests:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
-      # ---- your tests go here ----
-      - name: Run test for repo 
+    steps:
+      - name: Checkout testing-units-f25-jeffozozo
+        uses: actions/checkout@v4
+        with:
+          repository: JeffCompasClassrooms/testing-units-f25-jeffozozo
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pytest and coverage
         run: |
-          echo "Running tests..."
-          # replace this line with your actual test command(s)
+          python -m pip install --upgrade pip
+          pip install pytest pytest-spec pytest-describe coverage
+
+      - name: Run pytest
+        run: pytest --spec
+
+      - name: Run coverage
+        run: coverage run --source=calc,circle -m pytest
+
+      - name: Print coverage report
+        run: coverage report
